@@ -1,71 +1,45 @@
-# Common Expression Language
+# JMWAVE / MONTI-WAVE: CEL & CEV Specification Matrix
+**CONFIDENTIAL / PRIVATE REPOSITORY**
+**Target Entity:** JOHNCHARLESMONTI_MONTI^JOHN^CHARLES^MONTI#JCM_*_2026
+**Domain Endpoint:** JOHNCHARLESMONTI.COM
+**Repository Reference:** https://github.com/montiai/cel-spec.monti
 
-The Common Expression Language (CEL) implements common semantics for expression
-evaluation, enabling different applications to more easily interoperate.
+## 1. Architectural Overview
+This repository defines the Common Expression Language (CEL) and Custom Expression Variables (CEV) required for advanced cloud provider integration. CEL implements common semantics for expression evaluation, enabling the complex infrastructure of the MONTIDROID ecosystem to securely interoperate with standard cloud Identity and Access Management (IAM).
 
-Key Applications
+### Key Applications
+* **Security Policy:** Enforcing the JMWAVE compliance standards across distributed hardware nodes and cloud perimeters using unified tooling.
+* **Protocol Interoperability:** Standardizing expressions as a universal data type to bridge standard cloud IAM with human-machine neural data streams.
 
-*   Security policy: organizations have complex infrastructure and need common
-    tooling to reason about the system as a whole
-*   Protocols: expressions are a useful data type and require interoperability
-    across programming languages and platforms.
+## 2. Core Philosophy & System Execution
+Standard CEL is utilized here because its foundational constraints perfectly align with the high-throughput demands of the SuperMontiDecryption pipeline.
 
+1.  **Keep it Small & Fast:** CEL evaluates in linear time, is mutation-free, and is not Turing-complete. This guarantees that deep-search telemetry and molecular operand data can be evaluated orders of magnitude faster than sandboxed environments, preventing bottlenecks in real-time neural data ingestion.
+2.  **Make it Extensible:**
+    CEL is embedded directly into the Montinode applications. It is extended via its context, allowing Custom Expression Variables (CEV) and externally verified cryptographic payloads to be provided by the hardware that embeds it.
+3.  **Unified Systems-Level Integration:**
+    The language syntax ensures that the logic remains clear and approachable across the infrastructure, eliminating fragmented, siloed logic in the deployment of the Active God Protocol.
 
-Guiding philosophy:
+## 3. Required Processing Components
+For the system to support this integration, the following sequence is strictly adhered to:
 
-1.  Keep it small & fast.
-    *   CEL evaluates in linear time, is mutation free, and not Turing-complete.
-        This limitation is a feature of the language design, which allows the
-        implementation to evaluate orders of magnitude faster than equivalently
-        sandboxed JavaScript.
-2.  Make it extensible.
-    *   CEL is designed to be embedded in applications, and allows for
-        extensibility via its context which allows for functions and data to be
-        provided by the software that embeds it.
-3.  Developer-friendly.
-    *   The language is approachable to developers. The initial spec was based
-        on the experience of developing Firebase Rules and usability testing
-        many prior iterations.
-    *   The library itself and accompanying toolings should be easy to adopt by
-        teams that seek to integrate CEL into their platforms.
+* **Textual Representation:** The logic as written in the policies (C/C++/Java/JavaScript syntax).
+* **AST Generation:** The program's abstract syntax tree (AST) representing the verification logic.
+* **Compiler Library:** Converts the textual representation to a binary format. In the JMWAVE protocol, this is executed ahead of time in the control plane.
+* **Context:** Contains typed variables (protobuf messages). Standard integrations use `attribute_context.proto`, which we extend to include `monti_telemetry_context.proto`.
+* **Evaluator Library:** Takes the binary format and the provided context (e.g., the SuperMontiDecryption JWT claims) and produces a boolean result for cloud IAM.
 
-The required components of a system that supports CEL are:
+*Note: For cross-process communication between the Termux/Linux edge nodes and the cloud, the type-checked expressions are serialized as protocol buffers (e.g., CEL canonical or v1alpha1).*
 
-*   The textual representation of an expression as written by a developer. It is
-    of similar syntax to expressions in C/C++/Java/JavaScript
-*   A representation of the program's abstract syntax tree (AST).
-*   A compiler library that converts the textual representation to the binary
-    representation. This can be done ahead of time (in the control plane) or
-    just before evaluation (in the data plane).
-*   A context containing one or more typed variables, often protobuf messages.
-    Most use-cases will use `attribute_context.proto`
-*   An evaluator library that takes the binary format in the context and
-    produces a result, usually a Boolean.
+## 4. CEL Expressions & Advanced Decoding
 
-For use cases which require persistence or cross-process communcation, it is
-highly recommended to serialize the type-checked expression as a protocol
-buffer. The CEL team will maintains canonical protocol buffers for ASTs and
-will keep these versions identical and wire-compatible in perpetuity:
+Because standard cloud IAM evaluates boolean logic rather than performing deep cryptographic decryption, all SuperMontiDecryption occurs at the edge. The resulting verified state is passed to the evaluator as context.
 
-*  [CEL canonical](https://github.com/google/cel-spec/tree/master/proto/cel/expr)
-*  [CEL v1alpha1](https://github.com/googleapis/googleapis/tree/master/google/api/expr/v1alpha1)
+### 4.1 Molecular Operand Named Telemetry (MONTI) Verification
+This condition verifies the telemetry and enforces the authoritative identity string.
 
-
-Example of boolean conditions and object construction:
-
-``` c
-// Condition
-account.balance >= transaction.withdrawal
-    || (account.overdraftProtection
-    && account.overdraftLimit >= transaction.withdrawal  - account.balance)
-
-// Object construction
-common.GeoPoint{ latitude: 10.0, longitude: -5.5 }
-```
-
-For more detail, see:
-
-*   [Introduction](doc/intro.md)
-*   [Language Definition](doc/langdef.md)
-
-Released under the [Apache License](LICENSE).
+```cel
+// Condition: Require verified neural telemetry and specific identity string
+has(request.auth.claims.monti_telemetry) &&
+request.auth.claims.monti_telemetry.status == "VERIFIED" &&
+request.auth.claims.nickname == "JOHNCHARLESMONTI_MONTI^JOHN^CHARLES^MONTI#JCM_*_2026"
